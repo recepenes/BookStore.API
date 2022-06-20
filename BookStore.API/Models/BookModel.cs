@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BookStore.API.Data
+﻿namespace BookStore.API.Models
 {
-    public class Books
+    public class BookModel
     {
-        [Key]
         public int BookId { get; set; }
         public string Title { get; set; }
         public string Desctription { get; set; }
