@@ -28,14 +28,14 @@ namespace BookStore.API.Repository
         public async Task<BookModel> GetBookByIdAsync(int bookId)
         {
 
-            var records = await _context.Books.Where(x => x.BookId == bookId).Select(x => new BookModel()
+            var boks = await _context.Books.Where(x => x.BookId == bookId).Select(x => new BookModel()
             {
                 BookId = x.BookId,
                 Desctription = x.Desctription,
                 Title = x.Title,
             }).FirstOrDefaultAsync();
 
-            return records;
+            return boks;
         }
         public async Task<int> AddBookAsync(BookModel bookModel)
         {
@@ -48,6 +48,17 @@ namespace BookStore.API.Repository
             await _context.SaveChangesAsync();
 
             return book.BookId;
+        }
+        public async Task UpdateBookAsync(int bookId, BookModel bookModel)
+        {
+            var book = await _context.Books.FindAsync(bookId);
+            if (book is not null)
+            {
+                book.Title = bookModel.Title;
+                book.Desctription = bookModel.Desctription;
+
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
