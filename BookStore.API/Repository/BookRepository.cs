@@ -73,5 +73,15 @@ namespace BookStore.API.Repository
             }
 
         }
+        public async Task DeleteBookAsync(int id)
+        {
+            var book = new Books()
+            {
+                BookId = id,
+            };
+            _context.Books.Remove(book);
+            await _context.SaveChangesAsync();
+
+        }
     }
 }
