@@ -30,7 +30,7 @@ namespace BookStore.API.Controllers
             if (book == null) return NotFound();
             return Ok(book);
         }
-        [HttpPost("{id}")]
+        [HttpPost]
         public async Task<IActionResult> AddNewBook([FromBody] BookModel bookModel)
         {
             var id = await _bookRepository.AddBookAsync(bookModel);
