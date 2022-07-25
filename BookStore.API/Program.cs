@@ -22,6 +22,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IBookRepository, BookRepository>();
+builder.Services.AddTransient<IAccountRepository, AccountRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
