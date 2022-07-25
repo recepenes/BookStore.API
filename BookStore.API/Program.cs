@@ -1,5 +1,7 @@
 using BookStore.API.Data;
+using BookStore.API.Models;
 using BookStore.API.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,12 +11,18 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services.AddDbContext<BookStoreContext>(
     options => options.UseSqlServer(configuration.GetConnectionString("BookStoreDB")));
 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<BookStoreContext>()
+    .AddDefaultTokenProviders();
+
 builder.Services.AddControllers().AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IBookRepository, BookRepository>();
+
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddCors(option =>
