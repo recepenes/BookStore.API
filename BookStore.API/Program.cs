@@ -1,8 +1,11 @@
 using BookStore.API.Data;
 using BookStore.API.Models;
 using BookStore.API.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -10,6 +13,26 @@ ConfigurationManager configuration = builder.Configuration;
 
 builder.Services.AddDbContext<BookStoreContext>(
     options => options.UseSqlServer(configuration.GetConnectionString("BookStoreDB")));
+
+builder.Services.AddAuthentication(option =>
+{
+    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+     .AddJwtBearer(option =>
+     {
+         option.SaveToken = true;
+         option.RequireHttpsMetadata = false;
+         option.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+         {
+             ValidateIssuer = true,
+             ValidateAudience = true,
+             ValidAudience = configuration["JWT:ValidAudience"],
+             ValidIssuer = configuration["JWT:ValidIssuer"],
+             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
+         };
+     });
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<BookStoreContext>()
@@ -22,6 +45,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IBookRepository, BookRepository>();
+
+builder.Services.AddTransient<IAccountRepository, AccountRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
@@ -43,6 +68,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
