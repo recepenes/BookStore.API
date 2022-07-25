@@ -7,7 +7,6 @@ namespace BookStore.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class AccountController : ControllerBase
     {
         public IAccountRepository _accountRepository { get; }
@@ -29,5 +28,17 @@ namespace BookStore.API.Controllers
             return Unauthorized(result);
         }
 
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] SignInModel signInModel)
+        {
+            var result = await _accountRepository.LoginAsync(signInModel);
+
+            if (string.IsNullOrEmpty(result))
+            {
+                return Unauthorized(result);
+            }
+
+            return Ok(result);
+        }
     }
 }
